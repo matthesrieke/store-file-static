@@ -1,0 +1,8 @@
+<resources>
+    <!-- You can also inherit from NNF_BaseTheme.Light -->
+    <style name="FilePickerTheme" parent="Theme.AppCompat.NoActionBar">
+    </style>
+
+    <style name="FilePickerAlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+    </style>
+</resources>
