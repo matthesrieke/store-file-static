@@ -34,7 +34,7 @@ public class StoreFileMainActivityFragment extends Fragment implements AdapterVi
 
     private static final int FILE_CODE = 1000;
     private ListView listView;
-    private ActionMode mActionMode;
+    private ActionMode actionMode;
     private PathListViewAdapter listViewAdapter;
 
     public StoreFileMainActivityFragment() {
@@ -66,7 +66,7 @@ public class StoreFileMainActivityFragment extends Fragment implements AdapterVi
 
         updateListView();
 
-        ImageButton button = (ImageButton) view.findViewById(R.id.imageButton);
+        ImageButton button = (ImageButton) view.findViewById(R.id.addPathButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,7 +140,8 @@ public class StoreFileMainActivityFragment extends Fragment implements AdapterVi
                 }
                 // For Ice Cream Sandwich
 
-            } else {
+            }
+            else {
                 Uri uri = data.getData();
                 Log.i("YEAH", uri.getPath());
                 addPathItem(uri.getPath());
@@ -151,23 +152,30 @@ public class StoreFileMainActivityFragment extends Fragment implements AdapterVi
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        if (actionMode != null) {
+            onListItemSelect(position);
+        }
     }
 
     private void onListItemSelect(int position) {
         this.listViewAdapter.toggleSelection(position);
         boolean hasCheckedItems = this.listViewAdapter.getSelectedCount() > 0;
 
-        if (hasCheckedItems && mActionMode == null)
+        if (hasCheckedItems && actionMode == null) {
             // there are some selected items, start the actionMode
-            mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionModeCallback());
-        else if (!hasCheckedItems && mActionMode != null)
-            // there no selected items, finish the actionMode
-            mActionMode.finish();
+            actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionModeCallback());
+        }
 
-        if (mActionMode != null)
-            mActionMode.setTitle(String.valueOf(listViewAdapter
+        else if (!hasCheckedItems && actionMode != null) {
+            // there no selected items, finish the actionMode
+            actionMode.finish();
+        }
+
+        if (actionMode != null) {
+            actionMode.setTitle(String.valueOf(listViewAdapter
                     .getSelectedCount()) + " selected");
+        }
+
     }
 
     private class ActionModeCallback implements ActionMode.Callback {
@@ -209,7 +217,7 @@ public class StoreFileMainActivityFragment extends Fragment implements AdapterVi
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             listViewAdapter.removeSelection();
-            mActionMode = null;
+            actionMode = null;
         }
     }
 

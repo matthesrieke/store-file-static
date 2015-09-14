@@ -15,15 +15,21 @@ import android.widget.Toast;
 
 public class PathListViewAdapter extends ArrayAdapter<String> {
 
+    private final boolean allowMultipleSelection;
     private Context context;
     private List<String> paths;
     private SparseBooleanArray selectedItems;
 
     public PathListViewAdapter(Context context, int resId, List<String> paths) {
+        this(context, resId, paths, true);
+    }
+
+    public PathListViewAdapter(Context context, int resId, List<String> paths, boolean multiple) {
         super(context, resId, paths);
         selectedItems = new SparseBooleanArray();
         this.context = context;
         this.paths = paths;
+        this.allowMultipleSelection = multiple;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -65,6 +71,9 @@ public class PathListViewAdapter extends ArrayAdapter<String> {
     }
 
     public void toggleSelection(int position) {
+        if (!this.allowMultipleSelection) {
+            removeSelection();
+        }
         selectView(position, !selectedItems.get(position));
     }
 
@@ -74,10 +83,12 @@ public class PathListViewAdapter extends ArrayAdapter<String> {
     }
 
     public void selectView(int position, boolean value) {
-        if (value)
+        if (value) {
             selectedItems.put(position, value);
-        else
+        }
+        else{
             selectedItems.delete(position);
+        }
 
         notifyDataSetChanged();
     }
