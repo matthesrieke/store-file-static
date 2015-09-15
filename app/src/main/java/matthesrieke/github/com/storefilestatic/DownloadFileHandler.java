@@ -31,6 +31,7 @@ public class DownloadFileHandler extends AsyncTask<String, Integer, Void> {
      * */
     @Override
     protected Void doInBackground(String... path) {
+        publishProgress(0);
         int count;
         String targetFile = path[0].concat("/").concat(this.fileName);
         try {

@@ -19,7 +19,8 @@
         android:id="@+id/listView"
         android:layout_below="@+id/textView"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:choiceMode="singleChoice" />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -35,10 +36,20 @@
         android:layout_alignParentBottom="false"
         android:layout_centerHorizontal="true" />
 
+    <ProgressBar
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_below="@+id/saveButton"
+        android:layout_alignLeft="@+id/saveButton" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/progress_text"
-        android:layout_alignTop="@+id/saveButton" />
+        android:layout_alignTop="@+id/progressBar"
+        android:layout_toRightOf="@+id/progressBar"
+        android:text="Placeholder progress" />
 
 </RelativeLayout>

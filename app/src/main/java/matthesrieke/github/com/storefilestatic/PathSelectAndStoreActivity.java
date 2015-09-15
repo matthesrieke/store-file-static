@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.BufferedInputStream;
@@ -39,6 +40,8 @@ public class PathSelectAndStoreActivity extends AppCompatActivity implements Dow
     private ActionMode mActionMode;
     private DownloadFileHandler intentHandler;
     private TextView progressStatus;
+    private ProgressBar progressBar;
+    private ImageButton saveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +62,13 @@ public class PathSelectAndStoreActivity extends AppCompatActivity implements Dow
         });
 
         this.progressStatus = (TextView) findViewById(R.id.progress_text);
+        this.progressStatus.setText("");
+        this.progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        this.progressBar.setVisibility(View.INVISIBLE);
 
         updateListView();
 
-        ImageButton saveButton = (ImageButton) findViewById(R.id.saveButton);
+        this.saveButton = (ImageButton) findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,10 +78,37 @@ public class PathSelectAndStoreActivity extends AppCompatActivity implements Dow
                     String thePath = listViewAdapter.getItem(theItem);
                     if (intentHandler != null) {
                         intentHandler.execute(thePath);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                saveButton.setClickable(false);
+                                saveButton.setVisibility(View.INVISIBLE);
+                            }
+                        });
+
                     }
+                    else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressStatus.setText("No action available...");
+                            }
+                        });
+                    }
+                }
+                else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressStatus.setText("No path selected!");
+                        }
+                    });
                 }
             }
         });
+
+        intentHandler = new DownloadFileHandler("https://envirocar.org/api/stable/tracks/55ed9974e4b0b5111911cc1b/preview",
+                "track-preview", this);
 
         //get the received intent
         Intent receivedIntent = getIntent();
@@ -138,9 +171,11 @@ public class PathSelectAndStoreActivity extends AppCompatActivity implements Dow
         if (progress == null || progress.length == 0) {
             return;
         }
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                progressBar.setVisibility(View.VISIBLE);
                 progressStatus.setText("Progress: "+progress[0]);
             }
         });
@@ -148,7 +183,20 @@ public class PathSelectAndStoreActivity extends AppCompatActivity implements Dow
 
     @Override
     public void onFinished(String file) {
-        Log.i("storefilestatic", "stored file at "+ file);
-        finish();
+        Log.i("storefilestatic", "stored file at " + file);
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Log.e("error", e.getMessage(), e);
+                }
+                finish();
+                return null;
+            }
+        }.execute();
+
     }
 }
